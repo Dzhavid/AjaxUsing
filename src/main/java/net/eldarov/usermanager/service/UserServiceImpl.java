@@ -35,6 +35,10 @@ import java.util.List;
     public void deleteById(Long id){
         userRepository.deleteById(id);
     }
+
+    public void AddUserRole(Long id,Long id1){
+        userRepository.AddUserRole(id,id);
+    }
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(s);

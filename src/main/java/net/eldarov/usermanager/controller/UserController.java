@@ -1,29 +1,19 @@
 package net.eldarov.usermanager.controller;
-import net.eldarov.usermanager.config.LoginSuccessHandler;
+
 import net.eldarov.usermanager.model.User;
 import net.eldarov.usermanager.service.UserServiceImpl;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.List;
 
-import net.eldarov.usermanager.model.User;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
+@RestController
+public class UserController {
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Set;
-
-@Controller
-public class UserController extends LoginSuccessHandler {
 
     private final UserServiceImpl userService;
 
@@ -34,33 +24,41 @@ public class UserController extends LoginSuccessHandler {
 
 
     @GetMapping("/user")
-    public String userPage(Model model){
+    public String userPage(Model model) {
 
         return "user";
     }
 
-    @GetMapping("/users")
-    public String findAll(Model model){
+    @RequestMapping("/users")
+    public ModelAndView findAll(Model model) {
         List<User> users = userService.findAll();
         model.addAttribute("users", users);
-        return "users";
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("users");
+        return modelAndView;
     }
 
     @GetMapping("/user-create")
-    public String createUserForm(User user){
-        return "user-create";
+    public ModelAndView createUserForm(User user) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user-create");
+        return  modelAndView;
     }
 
     @PostMapping("/user-create")
-    public String createUser(User user){
+    public ModelAndView createUser(User user) {
+        ModelAndView modelAndView = new ModelAndView();
         userService.saveUser(user);
-        return "redirect:/users";
+        modelAndView.setViewName("redirect:/users");
+        return modelAndView;
     }
 
     @GetMapping("user-delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id){
+    public ModelAndView deleteUser(@PathVariable("id") Long id) {
+        ModelAndView modelAndView = new ModelAndView();
         userService.deleteById(id);
-        return "redirect:/users";
+        modelAndView.setViewName("redirect:/users");
+        return modelAndView;
     }
 
     @GetMapping("/login")
@@ -69,15 +67,19 @@ public class UserController extends LoginSuccessHandler {
     }
 
     @GetMapping("/user-update/{id}")
-    public String updateUserForm(@PathVariable("id") Long id, Model model){
+    public ModelAndView updateUserForm(@PathVariable("id") Long id, Model model) {
         User user = userService.findById(id);
         model.addAttribute("user", user);
-        return "user-update";
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user-update");
+        return modelAndView;
     }
 
     @PostMapping("/user-update")
-    public String updateUser(User user){
+    public ModelAndView updateUser(User user) {
+        ModelAndView modelAndView = new ModelAndView();
         userService.saveUser(user);
-        return "redirect:/users";
+        modelAndView.setViewName("redirect:/users");
+        return modelAndView;
     }
 }
